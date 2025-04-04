@@ -62,7 +62,7 @@
         map.on('load', () => {
             map.addSource('imageSource', {
                 type: 'raster',
-                url: 'cog://http://localhost:3333/KEWX_20170220_044018_101_3857.tiff#color:BrewerSpectral7,-7.5,59,c',
+                url: 'cog://http://localhost:3333/KEWX_20170220_044018_101_3857.tiff#color:BrewerRdYlGn11,-7.5,59,c',
             });
 
             map.addLayer({
@@ -71,7 +71,7 @@
                 type: 'raster',
                 paint: {
                     'raster-resampling': 'nearest',
-                    'raster-contrast': 1,
+
                 }
             });
 
