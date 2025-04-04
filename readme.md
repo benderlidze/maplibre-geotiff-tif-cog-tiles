@@ -11,5 +11,7 @@ gdal_translate -of COG -co COMPRESS=DEFLATE -co BIGTIFF=YES KEWX_20170220_044018
 
 https://labs.geomatico.es/maplibre-cog-protocol/
 
+#reproject
 gdalwarp -t_srs EPSG:3857 KEWX_20170220_044018_101.tiff KEWX_20170220_044018_101_3857.tiff
 
+gdalwarp -t_srs EPSG:3857 KEWX_20170220_044018_100_8bit.tiff KEWX_20170220_044018_100_8bit_3857.tiff
