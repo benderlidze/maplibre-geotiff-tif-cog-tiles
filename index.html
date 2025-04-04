@@ -62,7 +62,7 @@
         map.on('load', () => {
             map.addSource('imageSource', {
                 type: 'raster',
-                url: 'cog://http://localhost:3333/KEWX_20170220_044018_101_3857.tiff#color:BrewerRdYlGn11,-7.5,59,c',
+                url: 'cog://./KEWX_20170220_044018_101_3857.tiff#color:BrewerRdYlGn11,-7.5,59,c',
             });
 
             map.addLayer({
@@ -84,7 +84,7 @@
                 document.getElementById('info').style.left = x + 10 + 'px';
                 document.getElementById('info').style.top = y + 20 + 'px';
 
-                MaplibreCOGProtocol.locationValues('http://localhost:3333/KEWX_20170220_044018_101_3857.tiff', { latitude, longitude }, zoom)
+                MaplibreCOGProtocol.locationValues('./KEWX_20170220_044018_101_3857.tiff', { latitude, longitude }, zoom)
                     .then(result => {
                         const value = Math.round(result[0] * 1000) / 1000;
                         if (isNaN(value)) {
