@@ -58,28 +58,18 @@
             zoom: 8
         });
 
-        maplibregl.addProtocol('cog', MaplibreCOGProtocol.cogProtocol);
         map.on('load', () => {
-            map.addSource('imageSource', {
-                type: 'raster',
-                url: 'cog://./KEWX_20170220_044018_101_3857.tiff#color:BrewerRdYlGn11,-7.5,59,c',
-            });
-
-            map.addLayer({
-                id: 'imageLayer',
-                source: 'imageSource',
-                type: 'raster',
-                paint: {
-                    'raster-resampling': 'nearest',
-
-                }
-            });
 
             // Add GeoJSON source
             map.addSource('radar-polygons', {
                 type: 'geojson',
-                data: 'KEWX_20170220_044018_100.json'
+                data: 'KEWX_20170220_044018_100.geojson'
             });
+
+            //add markr 
+            new maplibregl.Marker()
+                .setLngLat([-98.02861000, 29.70406000])
+                .addTo(map);
 
             // Add polygon fill layer with color gradient based on DN value
             map.addLayer({
@@ -95,36 +85,43 @@
                             60, 'rgba(0, 255, 0, 0.7)'  // Green at DN = 60
                         ]
                     ],
+                    'fill-opacity': [
+                        'case',
+                        ['boolean', ['feature-state', 'hover'], false],
+                        0.9,  // Hover opacity
+                        0.7   // Default opacity
+                    ],
+                    // 'fill-outline-color': 'rgba(0, 0, 0, 0.5)'
                 }
             });
 
-            map.on('drag', () => document.getElementById('info').style.display = 'none');
+          
 
-            map.on('mousemove', (e) => {
-                const { lngLat: { lat: latitude, lng: longitude }, point: { x, y } } = e;
-                const zoom = map.getZoom();
+            // Add hover effect
+            const infoDiv = document.getElementById('info');
 
-                document.getElementById('info').style.left = x + 10 + 'px';
-                document.getElementById('info').style.top = y + 20 + 'px';
+            map.on('mousemove', 'radar-polygons-layer', (e) => {
+                if (e.features.length > 0) {
+                    const feature = e.features[0];
+                    infoDiv.style.display = 'block';
+                    infoDiv.style.left = e.point.x + 10 + 'px';
+                    infoDiv.style.top = e.point.y + 10 + 'px';
+                    infoDiv.textContent = `Value: ${feature.properties.value}`;
 
-                MaplibreCOGProtocol.locationValues('./KEWX_20170220_044018_101_3857.tiff', { latitude, longitude }, zoom)
-                    .then(result => {
-                        const value = Math.round(result[0] * 1000) / 1000;
-                        if (isNaN(value)) {
-                            map.getCanvas().style.cursor = '';
-                            document.getElementById('info').style.display = 'none';
-                        } else {
-                            map.getCanvas().style.cursor = 'default';
-                            document.getElementById('info').style.display = 'block';
-                            document.getElementById('info').innerHTML = `Value: <b>${value}</b>`;
-                        }
-                    });
+                    map.setFeatureState(
+                        { source: 'radar-polygons', id: feature.id },
+                        { hover: true }
+                    );
+                }
+            });
+
+            map.on('mouseleave', 'radar-polygons-layer', () => {
+                infoDiv.style.display = 'none';
+                map.setFeatureState(
+                    { source: 'radar-polygons', id: null },
+                    { hover: false }
+                );
             });
         });
-
-
-
     </script>
 </body>
-
-</html>
